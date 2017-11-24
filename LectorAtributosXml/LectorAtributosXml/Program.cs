@@ -49,6 +49,32 @@ namespace LectorAtributosXml
 
             Console.ReadLine();
 
+            var opcion = true;
+            do
+            {
+                Console.WriteLine("Por favor ingrese una fecha:\n\r");
+                var horaIngresada = Console.ReadLine();
+                DateTime horaConvertida;
+                if (DateTime.TryParse(horaIngresada, out horaConvertida))
+                {
+                    Console.WriteLine(horaIngresada);
+                }
+                else
+                {
+                    Console.WriteLine("La hora ingresada " + horaIngresada + ", no es válida.");
+                }
+
+                Console.WriteLine("¿Desea volver a intentarlo s[SI] o n [NO]?");
+                var caracter = Console.ReadLine();
+
+                opcion = true;
+                if (caracter.ToUpper() == "N")
+                {
+                    opcion = false;
+                }
+
+                Console.Clear();
+            } while (opcion);
         }
     }
 }
