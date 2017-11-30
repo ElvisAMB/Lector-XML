@@ -8,6 +8,7 @@ namespace Principal
 {
     public partial class Form1 : Form
     {
+        private DataTable dt = new DataTable();
         public Form1()
         {
             InitializeComponent();
@@ -16,7 +17,7 @@ namespace Principal
         private void btnCargarArchivo_Click(object sender, EventArgs e)
         {
             var ruta = openFileDialog1.ShowDialog();
-            if (openFileDialog1.FileName ==null)
+            if (openFileDialog1.FileName == null)
             {
 
             }
@@ -26,76 +27,75 @@ namespace Principal
 
             if (documento != null)
             {
-                DataTable dt = new DataTable();
                 DataColumn column;
-                
-                column = new DataColumn();
-                column.DataType = Type.GetType("System.Int32");
-                column.ColumnName = "CodDoc";
-                dt.Columns.Add(column);
 
-                column = new DataColumn();
-                column.DataType = System.Type.GetType("System.String");
-                column.ColumnName = "Autorizacion";
-                dt.Columns.Add(column);
+                if (dt.Rows.Count == 0)
+                {
+                    column = new DataColumn();
+                    column.DataType = Type.GetType("System.Int32");
+                    column.ColumnName = "CodDoc";
+                    dt.Columns.Add(column);
 
-                column = new DataColumn();
-                column.DataType = System.Type.GetType("System.String");
-                column.ColumnName = "ClaveAcceso";
-                dt.Columns.Add(column);
+                    column = new DataColumn();
+                    column.DataType = Type.GetType("System.String");
+                    column.ColumnName = "Autorizacion";
+                    dt.Columns.Add(column);
 
-                column = new DataColumn();
-                column.DataType = System.Type.GetType("System.String");
-                column.ColumnName = "Establecimiento";
-                dt.Columns.Add(column);
+                    column = new DataColumn();
+                    column.DataType = Type.GetType("System.String");
+                    column.ColumnName = "ClaveAcceso";
+                    dt.Columns.Add(column);
 
-                column = new DataColumn();
-                column.DataType = System.Type.GetType("System.String");
-                column.ColumnName = "PuntoEmision";
-                dt.Columns.Add(column);
+                    column = new DataColumn();
+                    column.DataType = System.Type.GetType("System.String");
+                    column.ColumnName = "Establecimiento";
+                    dt.Columns.Add(column);
 
-                column = new DataColumn();
-                column.DataType = System.Type.GetType("System.String");
-                column.ColumnName = "FechaEmision";
-                dt.Columns.Add(column);
+                    column = new DataColumn();
+                    column.DataType = Type.GetType("System.String");
+                    column.ColumnName = "PuntoEmision";
+                    dt.Columns.Add(column);
 
-                column = new DataColumn();
-                column.DataType = System.Type.GetType("System.String");
-                column.ColumnName = "NumeroSecuencia";
-                dt.Columns.Add(column);
+                    column = new DataColumn();
+                    column.DataType = Type.GetType("System.String");
+                    column.ColumnName = "FechaEmision";
+                    dt.Columns.Add(column);
 
-                column = new DataColumn();
-                column.DataType = System.Type.GetType("System.Decimal");
-                column.ColumnName = "BaseFte";
-                dt.Columns.Add(column);
+                    column = new DataColumn();
+                    column.DataType = Type.GetType("System.String");
+                    column.ColumnName = "NumeroSecuencia";
+                    dt.Columns.Add(column);
 
-                column = new DataColumn();
-                column.DataType = System.Type.GetType("System.Decimal");
-                column.ColumnName = "PorRetFte";
-                dt.Columns.Add(column);
+                    column = new DataColumn();
+                    column.DataType = Type.GetType("System.Decimal");
+                    column.ColumnName = "BaseFte";
+                    dt.Columns.Add(column);
 
-                column = new DataColumn();
-                column.DataType = System.Type.GetType("System.Decimal");
-                column.ColumnName = "ValorFte";
-                dt.Columns.Add(column);
+                    column = new DataColumn();
+                    column.DataType = Type.GetType("System.Decimal");
+                    column.ColumnName = "PorRetFte";
+                    dt.Columns.Add(column);
 
-                /**/
-                column = new DataColumn();
-                column.DataType = System.Type.GetType("System.Decimal");
-                column.ColumnName = "BaseIva";
-                dt.Columns.Add(column);
+                    column = new DataColumn();
+                    column.DataType = Type.GetType("System.Decimal");
+                    column.ColumnName = "ValorFte";
+                    dt.Columns.Add(column);
 
-                column = new DataColumn();
-                column.DataType = System.Type.GetType("System.Decimal");
-                column.ColumnName = "PorRetIva";
-                dt.Columns.Add(column);
+                    column = new DataColumn();
+                    column.DataType = Type.GetType("System.Decimal");
+                    column.ColumnName = "BaseIva";
+                    dt.Columns.Add(column);
 
-                column = new DataColumn();
-                column.DataType = System.Type.GetType("System.Decimal");
-                column.ColumnName = "ValorIva";
-                dt.Columns.Add(column);
+                    column = new DataColumn();
+                    column.DataType = Type.GetType("System.Decimal");
+                    column.ColumnName = "PorRetIva";
+                    dt.Columns.Add(column);
 
-                /***** Datos *****/
+                    column = new DataColumn();
+                    column.DataType = Type.GetType("System.Decimal");
+                    column.ColumnName = "ValorIva";
+                    dt.Columns.Add(column);
+                }
 
                 DataRow row = dt.NewRow();
 
@@ -117,28 +117,7 @@ namespace Principal
 
                 dt.Rows.Add(row);
 
-                /**/
-                //DataColumn[] primarykey = new DataColumn[1];
-                //primarykey[0] = dt.Columns["ValorRetencionIva"];
-                //dt.PrimaryKey = primarykey;
-
                 dataGridView1.DataSource = dt;
-
-                //listView1.Clear();
-                //listView1.Items.Add("Autorizacion:" + documento.Autorizacion + "\r");
-                //listView1.Items.Add("Secuencia:" + documento.NumeroSecuencia + "\r");
-                //listView1.Items.Add("Establecimiento:" + (documento.Establecimiento == "001" ? "Guayaquil" : (documento.Establecimiento == "002" ? "Quito" : (documento.Establecimiento == "003" ? "Cuenca" : ""))) + "\r");
-                //listView1.Items.Add("FechaEmision:" + documento.FechaEmision + "\r");
-                //listView1.Items.Add("Direccion:" + documento.Direccion + "\r");
-                //listView1.Items.Add("TipoDocumento:" + documento.TipoDocumento + "\r");
-                //listView1.Items.Add("BaseImponibleFuente:" + documento.BaseImponibleFuente + "\r");
-                //listView1.Items.Add("BaseImponibleIva:" + documento.BaseImponibleIva + "\r");
-                //listView1.Items.Add("PorcentajeRetencionFuente:" + documento.PorcentajeRetencionFuente + "\r");
-                //listView1.Items.Add("PorcentajeRetencionIva:" + documento.PorcentajeRetencionIva + "\r");
-                //listView1.Items.Add("ValorRetencionFuente:" + documento.ValorRetencionFuente + "\r");
-                //listView1.Items.Add("ValorRetencionIva:" + documento.ValorRetencionIva + "\r");
-                //listView1.Items.Add("PuntoEmision:" + documento.PuntoEmision + "\r");
-                //listView1.Items.Add("Número de Retención:" + documento.Establecimiento + "-" + documento.PuntoEmision + "-" + documento.NumeroSecuencia + "\r");
             }
         }
     }
