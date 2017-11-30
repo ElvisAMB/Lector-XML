@@ -3,13 +3,16 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.IO;
+using System.Linq;
 using System.Xml;
+using System.Xml.Linq;
 using System.Xml.Serialization;
 
-namespace LectorAtributosXml
+namespace Principal
 {
     public class LectorXml
     {
+        /*
         public DocumentoElectronico LeerXML(string ruta)
         {
             DocumentoElectronico documento = new DocumentoElectronico();
@@ -154,7 +157,7 @@ namespace LectorAtributosXml
 
             return documento;
         }
-
+        */
         public DataTable BuildDataTableFromXml(string Name, string XMLString, string ruta)
         {
             XmlDocument xmlDoc = new XmlDocument();
@@ -205,7 +208,6 @@ namespace LectorAtributosXml
 
             return Dt;
         }
-
         public DocumentoElectronico ObtenerXml()
         {
             DocumentoElectronico datos = new DocumentoElectronico();
@@ -238,7 +240,6 @@ namespace LectorAtributosXml
             }
             return datos;
         }
-
         public void ObtenerDatosXml()
         {
             //var consulta = from documento in XmlElement.Load(@"H:\ArchivosXml\RetencionPrueba\IEXT_00000000000000219571_2017821_1540.xml").Elements("");
@@ -258,7 +259,6 @@ namespace LectorAtributosXml
                     List<Juego> juegos = consulta.ToList<Juego>();
             */
         }
-
         public void leerXml()
         {
             string path = @"H:\ArchivosXml\RetencionPrueba\IEXT_00000000000000219571_2017821_1540.xml";
@@ -267,6 +267,66 @@ namespace LectorAtributosXml
 
             var libros = (DocumentoElectronico)serializer.Deserialize(reader);
             reader.Close();
+        }
+
+        public DocumentoElectronico LeerXML(string ruta)
+        {
+            DocumentoElectronico _respuesta = new DocumentoElectronico();
+            int codigoRetencion = 0;
+            try
+            {
+                XDocument xdoc = XDocument.Load(ruta);
+
+                var node = xdoc.DescendantNodes().Single(el => el.NodeType == XmlNodeType.CDATA);
+                var content = node.Parent.Value.Trim();
+
+                var xdoc_cdata = XDocument.Parse(content);
+
+                //Run query
+                var comp = from info in xdoc_cdata.Descendants("comprobanteRetencion")
+                           select new
+                           {
+                               TipoDocumento = info.Descendants("infoTributaria").Single().Element("codDoc").Value,
+                               Autorizacion = xdoc.Element("autorizacion").Element("numeroAutorizacion").Value,
+                               ClaveAcceso = info.Descendants("infoTributaria").Single().Element("claveAcceso").Value,
+                               Establecimiento = info.Descendants("infoTributaria").Single().Element("estab").Value,
+                               PuntoEmision = info.Descendants("infoTributaria").Single().Element("ptoEmi").Value,
+                               FechaEmision = info.Descendants("infoCompRetencion").Single().Element("fechaEmision").Value,
+                               NumeroSecuencia = info.Descendants("infoTributaria").Single().Element("secuencial").Value,
+                               BaseImponibleFuente = info.Descendants("impuestos").Descendants("impuesto").Where(s => s.Element("codigo").Value == "1" && s.Element("codigoRetencion").Value == "322").Select(t => t.Element("baseImponible").Value).SingleOrDefault(), //impuestos codigo 1
+                               BaseImponibleIva = info.Descendants("impuestos").Descendants("impuesto").Where(s => s.Element("codigo").Value == "2" ).Select(t => t.Element("baseImponible").Value).SingleOrDefault(), //impuestos codigo 2
+                               PorcentajeRetencionFuente = info.Descendants("impuestos").Descendants("impuesto").Where(s => s.Element("codigo").Value == "1" && s.Element("codigoRetencion").Value == "322").Select(t => t.Element("porcentajeRetener").Value).SingleOrDefault(),
+                               PorcentajeRetencionIva = info.Descendants("impuestos").Descendants("impuesto").Where(s => s.Element("codigo").Value == "2").Select(t => t.Element("porcentajeRetener").Value).SingleOrDefault(),
+                               ValorRetencionFuente = info.Descendants("impuestos").Descendants("impuesto").Where(s => s.Element("codigo").Value == "1" && s.Element("codigoRetencion").Value == "322").Select(t => t.Element("valorRetenido").Value).SingleOrDefault(),
+                               ValorRetencionIva = info.Descendants("impuestos").Descendants("impuesto").Where(s => s.Element("codigo").Value == "2").Select(t => t.Element("valorRetenido").Value).SingleOrDefault()
+                           };
+
+                if (comp != null)
+                {
+                    _respuesta.TipoDocumento = int.Parse(comp.Select(x => x.TipoDocumento).FirstOrDefault());
+                    _respuesta.Autorizacion = (comp.Select(x => x.Autorizacion).FirstOrDefault());
+                    _respuesta.ClaveAcceso = (comp.Select(x => x.ClaveAcceso).FirstOrDefault());
+                    _respuesta.Establecimiento = (comp.Select(x => x.Establecimiento).FirstOrDefault());
+                    _respuesta.PuntoEmision = (comp.Select(x => x.PuntoEmision).FirstOrDefault());
+                    _respuesta.FechaEmision = (comp.Select(x => x.FechaEmision).FirstOrDefault());
+                    _respuesta.NumeroSecuencia = (comp.Select(x => x.NumeroSecuencia).FirstOrDefault());
+                    _respuesta.BaseImponibleFuente = (comp.Select(x => x.BaseImponibleFuente).FirstOrDefault() != null ? float.Parse(comp.Select(x => x.BaseImponibleFuente).FirstOrDefault()) : 0);
+                    _respuesta.BaseImponibleIva = (comp.Select(x => x.BaseImponibleIva).FirstOrDefault() != null ? float.Parse(comp.Select(x => x.BaseImponibleIva).FirstOrDefault()) : 0);
+                    _respuesta.PorcentajeRetencionFuente = (comp.Select(x => x.PorcentajeRetencionFuente).FirstOrDefault() != null ? float.Parse(comp.Select(x => x.PorcentajeRetencionFuente).FirstOrDefault()) : 0);
+                    _respuesta.PorcentajeRetencionIva = (comp.Select(x => x.PorcentajeRetencionIva).FirstOrDefault() != null ? float.Parse(comp.Select(x => x.PorcentajeRetencionIva).FirstOrDefault()) : 0);
+                    _respuesta.ValorRetencionFuente = (comp.Select(x => x.ValorRetencionFuente).FirstOrDefault() != null ? float.Parse(comp.Select(x => x.ValorRetencionFuente).FirstOrDefault()) : 0);
+                    _respuesta.ValorRetencionIva = (comp.Select(x => x.ValorRetencionIva).FirstOrDefault() != null ? float.Parse(comp.Select(x => x.ValorRetencionIva).FirstOrDefault()) : 0);
+                }
+            }
+            catch (Exception ex)
+            {
+                using (StreamWriter writer = new StreamWriter("C:\\log_interop.txt", true))
+                {
+                    writer.WriteLine("Error en la carga del archivo xml " + ex.Message);
+                }
+            }
+
+            return _respuesta;
         }
     }
 }
