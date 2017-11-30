@@ -1,7 +1,6 @@
 ﻿using System;
 using Dominio;
 using System.Windows.Forms;
-using System.IO;
 using System.Data;
 
 namespace Principal
@@ -29,6 +28,7 @@ namespace Principal
             {
                 DataColumn column;
 
+                #region
                 if (dt.Rows.Count == 0)
                 {
                     column = new DataColumn();
@@ -96,6 +96,8 @@ namespace Principal
                     column.ColumnName = "ValorIva";
                     dt.Columns.Add(column);
                 }
+
+                #endregion
 
                 DataRow row = dt.NewRow();
 
